@@ -69,7 +69,7 @@ needMem <- round(needMem * 1.2)
 needTime <- as.numeric(ceiling(t[3] / 60 /60) + 1)
 needTime <- paste0("0", needTime, ":00:00")
 
-cat("\Building R script...\n")
+cat("\nBuilding R script...\n")
 #------------------------------------------------
 #Build R script
 sink("./scripts/permuLite_Rcode.R")
