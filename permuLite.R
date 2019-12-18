@@ -109,7 +109,7 @@ saveRDS(out, file = paste0('permuLiteOut_',arrayid,'.rds'))
 ", sep = "")
 sink()
 
-cat("\Building bash script...\n")
+cat("\nBuilding bash script...\n")
 #------------------------------------------------
 #Build batch script
 sink("./scripts/permuLite_run.sh")
