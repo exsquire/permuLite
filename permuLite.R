@@ -46,6 +46,7 @@ useCores <- 2
 
 invisible(gc())
 
+cat("\nEstimating Time and Memory Allocation...\n")
 t <- system.time(
 test <- scan1perm(apr, pheno[,1,drop = F],
                   kinship = kin,
