@@ -1,9 +1,8 @@
-setwd("./R/Parent/Extility_Belt/permuLite/")
+setwd(".")
 
 #PermuLite: Lite version permutation test using quantile standard error
 #method of selecting high confidence phenotypes for permutations
 library(qtl2)
-library(profmem)
 
 #Set paths for cross-script accessibility 
 probPath = "./test/oneChr_apr.rds"
@@ -16,7 +15,6 @@ ctrlPath = "./processed/control.rds"
 #present wd
 pwd <- getwd()
 
-
 #Load testing data for genome scan
 apr <- readRDS(probPath)
 pheno <- readRDS(phenPath)
@@ -24,6 +22,8 @@ kin <- readRDS(kinPath)
 cov <- readRDS(covPath)
 pmap <- readRDS(mapPath)
 
+
+cat("\nBuilding control file...\n")
 #Build a control file that maps your phenotype matrix to different
 #runs on a research cluster parallel array job
 source("./scripts/perminatorLite.R")
@@ -31,6 +31,7 @@ source("./scripts/perminatorLite.R")
 ctrl <- perminatorL(pheno, ask = F)
 saveRDS(ctrl, file = ctrlPath)
 
+cat("\nRunning Full Genome Scan...\n")
 #Run the full genome scan
 out <- scan1(genoprobs = apr, 
              pheno = pheno, 
@@ -46,19 +47,17 @@ useCores <- 2
 invisible(gc())
 
 t <- system.time(
-p <- profmem({
 test <- scan1perm(apr, pheno[,1,drop = F],
                   kinship = kin,
                   addcovar = cov,
                   n_perm = 50,
                   cores = useCores)
-})
 )
 
 #Estimate the amount of memory
 #needMem = max mem since last gc() + max Mb used in scan
 #times number of cores
-needMem <- sum(gc()[,6]) + (max(p$bytes) / 1000000 * useCores)
+needMem <- sum(gc()[,6]) * useCores
 needMem <- round(needMem * 1.2)
 
 #Estimate the run time in hours
