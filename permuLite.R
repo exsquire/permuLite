@@ -94,13 +94,11 @@ cat(
   #No longer a need for control file.
   start <- ctrl[arrayid, 2]
   stop  <- ctrl[arrayid, 3]
-  #Run scan1perm for autosome and sex chromosomes
+  #Run scan1perm
   perm <- scan1perm(apr,
   pheno[,start:stop, drop = FALSE],
   kinship = kLOCO,
   addcovar = covar,
-  perm_Xsp = TRUE, 
-  chr_lengths = chr_lengths(pmap)
   cores =",useCores,", 
   n_perm =",ctrl[1,4],")
   out <- data.frame(perm, check.names = F)
@@ -113,73 +111,69 @@ cat("\nBuilding bash script...\n")
 #Build batch script
 sink("./scripts/permuLite_run.sh")
 cat(
-  "#!/bin/bash -l
-  #SBATCH -J permuLite
-  #SBATCH -N 1
-  #SBATCH -c ",useCores,"
-  #SBATCH --mem-per-cpu=",needMem,"
-  #SBATCH --array=1-",attributes(ctrl)$numJobs,"
-  #SBATCH --partition=high
-  #SBATCH --time=",needTime,"
-  #Email me here when job starts, ends, or sh*ts the bed
-  #SBATCH --mail-user=excel.que@gmail.com
-  #SBATCH --mail-type=ALL
-  #SBATCH -o ",pwd,"/log/permuLite-%A_%a.out
-  #SBATCH -e ",pwd,"/log/permuLite-%A_%a.err
-  #scratch designation
-  export SCR_DIR=$(echo '/scratch/$USER/$SLURM_JOBID/$SLURM_ARRAY_TASK_ID')
-  #Use Full Paths
-  export OUTPUT_DIR=",pwd,"/results
-  # Load R
-  module load R
-  # Create scratch & copy everything over to scratch
-  mkdir -p $(echo '$SCR_DIR')
-  cd $(echo '$SCR_DIR')
-  #Copy over everything for permutation Run
-  cp -p ",pwd,gsub("^.","", probPath)," .
-  cp -p ",pwd,gsub("^.","", phenPath)," .
-  cp -p ",pwd,gsub("^.","", kinPath)," .
-  cp -p ",pwd,gsub("^.","", covPath)," .
-  cp -p ",pwd,gsub("^.","", ctrlPath)," . 
-  cp -p ",pwd,"/scripts/permuLite_Rcode.R .
-  #Confirm presence of input files in scratch
-  echo 'before srun in dir'
-  pwd
-  echo 'contents'
-  ls -al
-  # Termination Signal Trap - when a job goes over its walltime or user cancels job
-  termTrap()
-  {
-  echo 'Termination signal sent. Clearing scratch before exiting'
-  # do whatever cleanup you want here
-  rm -dr $(echo '$SCR_DIR')
-  exit -1
-  }
-  trap 'termTrap' TERM
-  #Run lightweight R instance
-  ", sep = "")
+"#!/bin/bash -l
+#SBATCH -J permuLite
+#SBATCH -N 1
+#SBATCH -c ",useCores,"
+#SBATCH --mem-per-cpu=",needMem,"
+#SBATCH --array=1-",attributes(ctrl)$numJobs,"
+#SBATCH --partition=high
+#SBATCH --time=",needTime,"
+#Email me here when job starts, ends, or sh*ts the bed
+#SBATCH --mail-user=excel.que@gmail.com
+#SBATCH --mail-type=ALL
+#SBATCH -o ",pwd,"/log/permuLite-%A_%a.out
+#SBATCH -e ",pwd,"/log/permuLite-%A_%a.err
+#scratch designation
+export SCR_DIR=/scratch/$USER/$SLURM_JOBID/$SLURM_ARRAY_TASK_ID
+#Use Full Paths
+export OUTPUT_DIR=",pwd,"/results
+# Load R
+module load R
+# Create scratch & copy everything over to scratch
+mkdir -p $SCR_DIR
+cd $SCR_DIR
+#Copy over everything for permutation Run
+cp -p ",pwd,gsub("^.","", probPath)," .
+cp -p ",pwd,gsub("^.","", phenPath)," .
+cp -p ",pwd,gsub("^.","", kinPath)," .
+cp -p ",pwd,gsub("^.","", covPath)," .
+cp -p ",pwd,gsub("^.","", ctrlPath)," .
+cp -p ",pwd,gsub("^.","", mapPath)," . 
+cp -p ",pwd,"/scripts/permuLite_Rcode.R .
+#Confirm presence of input files in scratch
+echo 'before srun in dir'
+pwd
+echo 'contents'
+ls -al
+# Termination Signal Trap - when a job goes over its walltime or user cancels job
+termTrap()
+{
+echo 'Termination signal sent. Clearing scratch before exiting'
+# do whatever cleanup you want here
+rm -dr $SCR_DIR
+exit -1
+}
+trap 'termTrap' TERM
+#Run lightweight R instance
+srun R --vanilla --args $SLURM_ARRAY_TASK_ID <  ./Rcode.R
 
-cat("
-    srun R --vanilla --args ","$(echo '$SLURM_ARRAY_TASK_ID')"," <  ./Rcode.R
-    ", sep = "\"")
+#Confirm that output made it
+echo 'after srun, directory'
+ls -al
 
-cat("
-    #Confirm that output made it
-    echo 'after srun, directory'
-    ls -al
-    echo work=$(echo '$WORK_DIR')
-    echo scr=$(echo '$SCR_DIR')
-    # Copy results over
-    cd $(echo '$OUTPUT_DIR')
-    #change to output directory (now the pwd)
-    cp -p $(echo '$SCR_DIR')/*_perm_* .
-    #Routine Scratch Cleanup
-    rm -dr $(echo '$SCR_DIR')
-    ")
+echo work=$WORK_DIR
+echo scr=$SCR_DIR
 
-cat("
-    echo ","End of program at $(echo '`date`')"  
-    ,"", sep = "\"")
+#Copy results over
+cd $OUTPUT_DIR
+
+#change to output directory (now the pwd)
+cp -p $SCR_DIR/permuLiteOut_* .
+#Routine Scratch Cleanup
+rm -dr $SCR_DIR
+echo 'End of program at '`date`''
+", sep = "")
 sink()
 
 cat("\nDone.\n")
