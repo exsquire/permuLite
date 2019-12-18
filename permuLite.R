@@ -52,11 +52,11 @@ invisible(gc())
 
 cat("\nEstimating Time and Memory Allocation...\n")
 t <- system.time(
-test <- scan1perm(apr, pheno[,1,drop = F],
-                  kinship = kin,
-                  addcovar = cov,
-                  n_perm = 50,
-                  cores = useCores)
+  test <- scan1perm(apr, pheno[,1,drop = F],
+                    kinship = kin,
+                    addcovar = cov,
+                    n_perm = 50,
+                    cores = useCores)
 )
 
 #Estimate the amount of memory
@@ -69,44 +69,43 @@ needMem <- round(needMem * 1.2)
 needTime <- as.numeric(ceiling(t[3] / 60 /60) + 1)
 needTime <- paste0("0", needTime, ":00:00")
 
-cat("\Building R script...\n")
+cat("\nBuilding R script...\n")
 #------------------------------------------------
 #Build R script
 sink("./scripts/permuLite_Rcode.R")
 cat(
-"library(qtl2)
-#Read in inputs
-apr <- readRDS(",basename(probPath),")
-pheno <- readRDS(",basename(phenPath),")
-kLOCO <- readRDS(",basename(kinPath),")
-covar <- readRDS(",basename(covPath),")
-ctrl <- readRDS(",basename(ctrlPath),")
-pmap <- readRDS(",basename(mapPath),")
-", sep = "'")
+  "library(qtl2)
+  #Read in inputs
+  apr <- readRDS(",basename(probPath),")
+  pheno <- readRDS(",basename(phenPath),")
+  kLOCO <- readRDS(",basename(kinPath),")
+  covar <- readRDS(",basename(covPath),")
+  ctrl <- readRDS(",basename(ctrlPath),")
+  pmap <- readRDS(",basename(mapPath),")
+  ", sep = "'")
 
 cat(
-"#Intialize array id - array id will only function as a sequential designation
-args<-as.integer(unlist(strsplit(commandArgs(TRUE),' ')))
-print(args)
-arrayid <-args[1]
-print(arrayid)
-#Cores controlled from command line
-#No longer a need for control file.
-start <- ctrl[arrayid, 2]
-stop  <- ctrl[arrayid, 3]
-#Run scan1perm for autosome and sex chromosomes
-perm <- scan1perm(apr,
-        pheno[,start:stop, drop = FALSE],
-        kinship = kLOCO,
-        addcovar = covar,
-        perm_Xsp = TRUE, 
-        chr_lengths = chr_lengths(pmap)
-        cores =",useCores,", 
-        n_perm =",ctrl[1,4],")
-
-out <- data.frame(perm, check.names = F)
-saveRDS(out, file = paste0('permuLiteOut_',arrayid,'.rds'))
-", sep = "")
+  "#Intialize array id - array id will only function as a sequential designation
+  args<-as.integer(unlist(strsplit(commandArgs(TRUE),' ')))
+  print(args)
+  arrayid <-args[1]
+  print(arrayid)
+  #Cores controlled from command line
+  #No longer a need for control file.
+  start <- ctrl[arrayid, 2]
+  stop  <- ctrl[arrayid, 3]
+  #Run scan1perm for autosome and sex chromosomes
+  perm <- scan1perm(apr,
+  pheno[,start:stop, drop = FALSE],
+  kinship = kLOCO,
+  addcovar = covar,
+  perm_Xsp = TRUE, 
+  chr_lengths = chr_lengths(pmap)
+  cores =",useCores,", 
+  n_perm =",ctrl[1,4],")
+  out <- data.frame(perm, check.names = F)
+  saveRDS(out, file = paste0('permuLiteOut_',arrayid,'.rds'))
+  ", sep = "")
 sink()
 
 cat("\nBuilding bash script...\n")
@@ -114,80 +113,73 @@ cat("\nBuilding bash script...\n")
 #Build batch script
 sink("./scripts/permuLite_run.sh")
 cat(
-"#!/bin/bash -l
-#SBATCH -J permuLite
-#SBATCH -N 1
-#SBATCH -c ",useCores,"
-#SBATCH --mem-per-cpu=",needMem,"
-#SBATCH --array=1-",attributes(ctrl)$numJobs,"
-#SBATCH --partition=high
-#SBATCH --time=",needTime,"
-#Email me here when job starts, ends, or sh*ts the bed
-#SBATCH --mail-user=excel.que@gmail.com
-#SBATCH --mail-type=ALL
-#SBATCH -o ",pwd,"/log/permuLite-%A_%a.out
-#SBATCH -e ",pwd,"/log/permuLite-%A_%a.err
-#scratch designation
-export SCR_DIR=$(echo '/scratch/$USER/$SLURM_JOBID/$SLURM_ARRAY_TASK_ID')
-#Use Full Paths
-export OUTPUT_DIR=",pwd,"/results
-
-# Load R
-module load R
-
-# Create scratch & copy everything over to scratch
-mkdir -p $(echo '$SCR_DIR')
-cd $(echo '$SCR_DIR')
-
-#Copy over everything for permutation Run
-cp -p ",pwd,gsub("^.","", probPath)," .
-cp -p ",pwd,gsub("^.","", phenPath)," .
-cp -p ",pwd,gsub("^.","", kinPath)," .
-cp -p ",pwd,gsub("^.","", covPath)," .
-cp -p ",pwd,gsub("^.","", ctrlPath)," . 
-cp -p ",pwd,"/scripts/permuLite_Rcode.R .
-
-#Confirm presence of input files in scratch
-echo 'before srun in dir'
-pwd
-echo 'contents'
-ls -al
-
-
-# Termination Signal Trap - when a job goes over its walltime or user cancels job
-termTrap()
-{
+  "#!/bin/bash -l
+  #SBATCH -J permuLite
+  #SBATCH -N 1
+  #SBATCH -c ",useCores,"
+  #SBATCH --mem-per-cpu=",needMem,"
+  #SBATCH --array=1-",attributes(ctrl)$numJobs,"
+  #SBATCH --partition=high
+  #SBATCH --time=",needTime,"
+  #Email me here when job starts, ends, or sh*ts the bed
+  #SBATCH --mail-user=excel.que@gmail.com
+  #SBATCH --mail-type=ALL
+  #SBATCH -o ",pwd,"/log/permuLite-%A_%a.out
+  #SBATCH -e ",pwd,"/log/permuLite-%A_%a.err
+  #scratch designation
+  export SCR_DIR=$(echo '/scratch/$USER/$SLURM_JOBID/$SLURM_ARRAY_TASK_ID')
+  #Use Full Paths
+  export OUTPUT_DIR=",pwd,"/results
+  # Load R
+  module load R
+  # Create scratch & copy everything over to scratch
+  mkdir -p $(echo '$SCR_DIR')
+  cd $(echo '$SCR_DIR')
+  #Copy over everything for permutation Run
+  cp -p ",pwd,gsub("^.","", probPath)," .
+  cp -p ",pwd,gsub("^.","", phenPath)," .
+  cp -p ",pwd,gsub("^.","", kinPath)," .
+  cp -p ",pwd,gsub("^.","", covPath)," .
+  cp -p ",pwd,gsub("^.","", ctrlPath)," . 
+  cp -p ",pwd,"/scripts/permuLite_Rcode.R .
+  #Confirm presence of input files in scratch
+  echo 'before srun in dir'
+  pwd
+  echo 'contents'
+  ls -al
+  # Termination Signal Trap - when a job goes over its walltime or user cancels job
+  termTrap()
+  {
   echo 'Termination signal sent. Clearing scratch before exiting'
   # do whatever cleanup you want here
   rm -dr $(echo '$SCR_DIR')
   exit -1
-}
-trap 'termTrap' TERM
-
-#Run lightweight R instance
-", sep = "")
-
-cat("
-srun R --vanilla --args ","$(echo '$SLURM_ARRAY_TASK_ID')"," <  ./Rcode.R
-", sep = "\"")
+  }
+  trap 'termTrap' TERM
+  #Run lightweight R instance
+  ", sep = "")
 
 cat("
-#Confirm that output made it
-echo 'after srun, directory'
-ls -al
-echo work=$(echo '$WORK_DIR')
-echo scr=$(echo '$SCR_DIR')
-# Copy results over
-cd $(echo '$OUTPUT_DIR')
-#change to output directory (now the pwd)
-cp -p $(echo '$SCR_DIR')/*_perm_* .
-#Routine Scratch Cleanup
-rm -dr $(echo '$SCR_DIR')
-")
+    srun R --vanilla --args ","$(echo '$SLURM_ARRAY_TASK_ID')"," <  ./Rcode.R
+    ", sep = "\"")
 
 cat("
-echo ","End of program at $(echo '`date`')"  
-,"", sep = "\"")
+    #Confirm that output made it
+    echo 'after srun, directory'
+    ls -al
+    echo work=$(echo '$WORK_DIR')
+    echo scr=$(echo '$SCR_DIR')
+    # Copy results over
+    cd $(echo '$OUTPUT_DIR')
+    #change to output directory (now the pwd)
+    cp -p $(echo '$SCR_DIR')/*_perm_* .
+    #Routine Scratch Cleanup
+    rm -dr $(echo '$SCR_DIR')
+    ")
+
+cat("
+    echo ","End of program at $(echo '`date`')"  
+    ,"", sep = "\"")
 sink()
 
 cat("\nDone.\n")
