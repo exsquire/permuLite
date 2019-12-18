@@ -156,7 +156,7 @@ exit -1
 }
 trap 'termTrap' TERM
 #Run lightweight R instance
-srun R --vanilla --args $SLURM_ARRAY_TASK_ID <  ./Rcode.R
+srun R --vanilla --args $SLURM_ARRAY_TASK_ID <  ./permuLite_Rcode.R
 
 #Confirm that output made it
 echo 'after srun, directory'
