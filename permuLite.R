@@ -4,6 +4,10 @@ setwd(".")
 #method of selecting high confidence phenotypes for permutations
 library(qtl2)
 
+dir.create("processed")
+dir.create("log")
+dir.create("results")
+
 #Set paths for cross-script accessibility 
 probPath = "./test/oneChr_apr.rds"
 phenPath = "./test/testPheno.rds"
@@ -65,7 +69,7 @@ needMem <- round(needMem * 1.2)
 needTime <- as.numeric(ceiling(t[3] / 60 /60) + 1)
 needTime <- paste0("0", needTime, ":00:00")
 
-
+cat("\Building R script...\n")
 #------------------------------------------------
 #Build R script
 sink("./scripts/permuLite_Rcode.R")
@@ -105,6 +109,7 @@ saveRDS(out, file = paste0('permuLiteOut_',arrayid,'.rds'))
 ", sep = "")
 sink()
 
+cat("\Building bash script...\n")
 #------------------------------------------------
 #Build batch script
 sink("./scripts/permuLite_run.sh")
@@ -184,3 +189,5 @@ cat("
 echo ","End of program at $(echo '`date`')"  
 ,"", sep = "\"")
 sink()
+
+cat("\nDone.\n")
