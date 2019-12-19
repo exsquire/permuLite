@@ -60,10 +60,9 @@ t <- system.time(
 )
 
 #Estimate the amount of memory
-#needMem = max mem since last gc() + max Mb used in scan
-#times number of cores
-needMem <- sum(gc()[,6]) * useCores
-needMem <- round(needMem * 1.2)
+#needMem = use max mem per core for your cluster partition
+needMem <- 2500
+
 
 #Estimate the run time in hours
 needTime <- as.numeric(ceiling(t[3] / 60 /60) + 1)
