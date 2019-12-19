@@ -35,6 +35,7 @@ for(i in seq_along(outfiles)){
 }
 outlist[sapply(outlist, is.null)] <- NULL
 res <- do.call("rbind",outlist)
+saveRDS(res, "../processed/profOut.rds")
 
 #Note* 
 #This method is based on minimizing the moving parts of resource
