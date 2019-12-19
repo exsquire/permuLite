@@ -11,3 +11,10 @@ Decrease run time for permutation analysis in r/qtl2 eQTL analysis by filtering 
 6. Perform a Genome scan 
 7. Filter for phenotypes whose max genome scan lod score is greater than its threshold in step 5. 
 8. Run 1,000 permutation on filtered phenotypes. 
+
+## To Use
+1. Git clone onto unix-based cluster
+2. cd into permuLite
+3. Rscript permuLite.R -> Inspect newly generated R and bash scripts in /scripts
+4. cd scripts
+5. Rscript SystemControl.R
