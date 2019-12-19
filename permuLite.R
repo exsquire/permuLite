@@ -141,6 +141,7 @@ cp -p ",pwd,gsub("^.","", covPath)," .
 cp -p ",pwd,gsub("^.","", ctrlPath)," .
 cp -p ",pwd,gsub("^.","", mapPath)," . 
 cp -p ",pwd,"/scripts/permuLite_Rcode.R .
+
 #Confirm presence of input files in scratch
 echo 'before srun in dir'
 pwd
