@@ -17,4 +17,5 @@ Decrease run time for permutation analysis in r/qtl2 eQTL analysis by filtering 
 2. cd into permuLite
 3. Rscript permuLite.R -> Inspect newly generated R and bash scripts in /scripts
 4. cd scripts
-5. Rscript SystemControl.R
+5. Rscript SystemControl.R -> Runs 10 jobs, optimizes memory and time allocations based on profile data, runs full job with optimized parameters. 
+6. [Coming soon]
