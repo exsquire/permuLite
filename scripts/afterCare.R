@@ -38,14 +38,15 @@ if(length(miss) != 0){
   cat("\nRe-running...\n")
   cmd_override <- readLines("../processed/opt_params.txt", warn = FALSE)
   re_run <- gsub("sbatch",paste0("sbatch --array=",miss_resub),cmd_override)
-  cat("\nRe-running failed jobs.")
+  cat("\nRe-running failed jobs.\n")
   system(re_run)
 }
 
-cat("n\Waiting for re-runs to finish...")
+cat("\nWaiting for re-runs to finish...\n")
 while(length(list.files("../results/")) != nrow(ctrl)){
   Sys.sleep(60)
 }
+
 cat("\nReruns finished.\n")
 cat("\nCombining runs into permutation matrix.")
 quiltR <- function(pathIn){
