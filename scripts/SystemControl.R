@@ -70,5 +70,8 @@ optMem_perCore <- (ceiling(optMem * 2)/2)/cores * 1000
 cmd_override <- paste0("sbatch --mem-per-cpu=",optMem_perCore,
                        " --time=",optTime,
                        " permuLite_run.sh")
+sink("../processed/opt_params.txt")
+cat(cmd_override)
+sink()
 system(cmd_override)
 
