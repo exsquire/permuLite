@@ -23,5 +23,6 @@ Decrease run time for permutation analysis in r/qtl2 eQTL analysis by filtering 
 6. Test afterCare utility suite. 
 - cd /results, remove files at random
 - cd /scripts
+- chmod 755 afterCare.R
 - Rscript afterCare.R 
 - Re-runs failed or missing runs, combines jobs into permutation matrix based on column name 
