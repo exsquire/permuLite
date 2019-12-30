@@ -98,7 +98,7 @@ if(2500 > newCoreMem){
 #Re-run sbatch using new mem-per-cpu and time override
 cmd_override <- paste0("sbatch --mem-per-cpu=",newCoreMem,
                        " --time=",optTime,
-                       " -c=",adjustCores,
+                       " -c ",adjustCores,
                        " permuLite_run.sh")
 sink("../processed/opt_params.txt")
 cat(cmd_override)
