@@ -78,21 +78,25 @@ optMem <- mean(pullMem) + 4*sd(pullMem)
 #round up to nearest half gig
 optMem_perCore <- (ceiling(optMem * 2)/2)/cores * 1000
 
-#What if optMem is not larger than available cores? 
-#Request more cores and distribute memory equally
+#Adjust cores so optMem_perCore is close to max mem per core
+#But not over max mem per core
 #2500M is partition specific - enter your own partition's max if different
-newCores <- cores
+adjustCores <- 2
 newCoreMem <- optMem_perCore
-while(newCoreMem > 2500){
-  newCores <- newCores + 1
-  newCoreMem <- ceiling((ceiling(optMem * 2)/2)/newCores * 1000)
+#If 2 cores are enough, keep, but update mem request
+#Else, increase cores and update mem request
+if(2500 > newCoreMem){
+  newCoreMem <- ceiling((ceiling(optMem * 2)/2)/adjustCores * 1000)
+}else{
+  while(newCoreMem > 2500 | newCoreMem < 2000){
+    adjustCores <- adjustCores + 1
+    newCoreMem <- ceiling((ceiling(optMem * 2)/2)/adjustCores * 1000)
+  }
 }
-
-
 #Re-run sbatch using new mem-per-cpu and time override
 cmd_override <- paste0("sbatch --mem-per-cpu=",newCoreMem,
                        " --time=",optTime,
-                       " -c=",newCores,
+                       " -c=",adjustCores,
                        " permuLite_run.sh")
 sink("../processed/opt_params.txt")
 cat(cmd_override)

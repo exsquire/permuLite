@@ -62,7 +62,8 @@ t <- system.time(
 #Estimate the amount of memory
 #needMem = use max mem per core for your cluster partition
 needMem <- 2500
-
+#Assumes maxCores * needMem is >>> required memory per job, if not, chop up job
+maxCores <- 10
 
 #Estimate the run time in hours
 needTime <- as.numeric(ceiling(t[3] / 60 /60) + 1)
@@ -113,7 +114,7 @@ cat(
 "#!/bin/bash -l
 #SBATCH -J permuLite
 #SBATCH -N 1
-#SBATCH -c ",useCores,"
+#SBATCH -c ",maxCores,"
 #SBATCH --mem-per-cpu=",needMem,"
 #SBATCH --array=1-",attributes(ctrl)$numJobs,"
 #SBATCH --partition=high
