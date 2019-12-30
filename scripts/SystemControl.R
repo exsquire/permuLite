@@ -19,8 +19,7 @@ cat("\nJobs have completed. Profiling jobs for optimization...\n")
 
 
 #Extract the SLURM job profiles
-#outfiles <- list.files("../log/", pattern = ".out", full.names = TRUE)
-outfiles <- list.files("../../../../../Downloads/log/", pattern = ".out", full.names = TRUE)
+outfiles <- list.files("../log/", pattern = ".out", full.names = TRUE)
 outlist <- list()
 for(i in seq_along(outfiles)){
   tmp <- readLines(outfiles[i])
@@ -79,9 +78,21 @@ optMem <- mean(pullMem) + 4*sd(pullMem)
 #round up to nearest half gig
 optMem_perCore <- (ceiling(optMem * 2)/2)/cores * 1000
 
+#What if optMem is not larger than available cores? 
+#Request more cores and distribute memory equally
+#2500M is partition specific - enter your own partition's max if different
+newCores <- cores
+newCoreMem <- optMem_perCore
+while(newCoreMem > 2500){
+  newCores <- newCores + 1
+  newCoreMem <- ceiling((ceiling(optMem * 2)/2)/newCores * 1000)
+}
+
+
 #Re-run sbatch using new mem-per-cpu and time override
-cmd_override <- paste0("sbatch --mem-per-cpu=",optMem_perCore,
+cmd_override <- paste0("sbatch --mem-per-cpu=",newCoreMem,
                        " --time=",optTime,
+                       " -c=",newCores,
                        " permuLite_run.sh")
 sink("../processed/opt_params.txt")
 cat(cmd_override)
