@@ -19,16 +19,27 @@ cat("\nJobs have completed. Profiling jobs for optimization...\n")
 
 
 #Extract the SLURM job profiles
-outfiles <- list.files("../log/", pattern = ".out", full.names = TRUE)
+#outfiles <- list.files("../log/", pattern = ".out", full.names = TRUE)
+outfiles <- list.files("../../../../../Downloads/log/", pattern = ".out", full.names = TRUE)
 outlist <- list()
 for(i in seq_along(outfiles)){
   tmp <- readLines(outfiles[i])
-  if(length(tmp) < grep("End of program", tmp)+1){
+  pos <- grep("End of program", tmp)+1
+  #Alternative profile output
+  if(length(pos) == 0){
+    #Check for "State" row in 7th position
+    altPos <- grep("State", tmp)
+    if(altPos == 7){
+      pos = 1
+    }
+  }
+  if(length(tmp) < pos){
       outlist[[i]] <- NULL
   }else{
-      split <- strsplit(tmp[(grep("End of program", tmp)+1):length(tmp)], ": ")
+      split <- strsplit(tmp[pos:length(tmp)], ": ")
       trim <- lapply(split, trimws)
       outlist[[i]] <- setNames(sapply(trim, function(x)x[2]),sapply(trim, function(x)x[1]))
+      outlist[[i]] <- c("jobID" = gsub("\\.out$","",basename(outfiles[i])),outlist[[i]])
   }
   
 }
@@ -46,7 +57,9 @@ saveRDS(res, "../processed/profOut.rds")
 
 #OPTIMIZATION INCORPORTATES SAFETY MARGINS IN RESOURCE REQUESTS
 #Calculate optimal time  
-pullTime <- strptime(res[,"Used walltime"],'%H:%M:%S')
+#For completed runs only
+isComp <- res[,"State"] == "COMPLETED"
+pullTime <- strptime(res[isComp,"Used walltime"],'%H:%M:%S')
 #convert to strptime
 sec <- (pullTime$hour * 3600) + (pullTime$min * 60) + pullTime$sec
 
@@ -56,12 +69,12 @@ optTime <- sprintf('%02d:%02d:%02d', secForm@hour, minute(secForm), second(secFo
 
 #Calculate optimal memory
 #Make sure it's in gigs and #cores are constant
-stopifnot(all(grepl("G", res[,"Max Mem used"])))
-stopifnot(length(unique(res[,"Cores"])) == 1)
+stopifnot(all(grepl("G", res[isComp,"Max Mem used"])))
+stopifnot(length(unique(res[isComp,"Cores"])) == 1)
 
 #Pull mem and cores and calc a "safe" value
-cores <- as.numeric(res[,"Cores"][1])
-pullMem <- as.numeric(gsub("[A-Z].*$","",res[,"Max Mem used"]))
+cores <- as.numeric(res[isComp,"Cores"][1])
+pullMem <- as.numeric(gsub("[A-Z].*$","",res[isComp,"Max Mem used"]))
 optMem <- mean(pullMem) + 4*sd(pullMem)
 #round up to nearest half gig
 optMem_perCore <- (ceiling(optMem * 2)/2)/cores * 1000
