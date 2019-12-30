@@ -4,12 +4,14 @@ library(lubridate)
 #chmod the permuLite R and bash code
 system("chmod 755 permuLite_Rcode.R permuLite_run.sh")
 
+#Log folder must be empty
+stopifnot(length(list.files("../log")) == 0 )
+
 #Run 10 array jobs
 system("sbatch --array=1-10 permuLite_run.sh")
 
-#Check for 20 out/err files in the log folder
-stopifnot(length(list.files("../log")) == 0 )
 
+#Check for 20 out/err files in the log folder
 #Wait loop
 cat("\nWaiting for jobs to finish, updates every minute...")
 while(length(list.files("../results")) != 10){
