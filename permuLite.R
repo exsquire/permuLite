@@ -48,26 +48,14 @@ saveRDS(out,"./processed/testOut.rds")
 #Set number of cores
 useCores <- 2
 
-invisible(gc())
-
-cat("\nEstimating Time and Memory Allocation...\n")
-t <- system.time(
-  test <- scan1perm(apr, pheno[,1,drop = F],
-                    kinship = kin,
-                    addcovar = cov,
-                    n_perm = 50,
-                    cores = useCores)
-)
-
-#Estimate the amount of memory
+#Fudge the memory and time allocations
 #needMem = use max mem per core for your cluster partition
 needMem <- 2500
 #Assumes maxCores * needMem is >>> required memory per job, if not, chop up job
 maxCores <- 10
 
-#Estimate the run time in hours
-needTime <- as.numeric(ceiling(t[3] / 60 /60) + 1)
-needTime <- paste0("0", needTime, ":00:00")
+#24 hours default
+needTime <- "24:00:00"
 
 cat("\nBuilding R script...\n")
 #------------------------------------------------
@@ -99,10 +87,11 @@ cat(
   pheno[,start:stop, drop = FALSE],
   kinship = kLOCO,
   addcovar = covar,
+  perm_Xsp = TRUE, 
+  chr_lengths = chr_lengths(pmap),
   cores =",useCores,", 
   n_perm =",ctrl[1,4],")
-  out <- data.frame(perm, check.names = F)
-  saveRDS(out, file = paste0('permuLiteOut_',arrayid,'.rds'))
+  saveRDS(perm, file = paste0('permuLiteOut_',arrayid,'.rds'))
   ", sep = "")
 sink()
 
