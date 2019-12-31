@@ -8,7 +8,7 @@ system("chmod 755 permuLite_Rcode.R permuLite_run.sh")
 stopifnot(length(list.files("../log")) == 0 )
 
 #Run 10 array jobs
-system("sbatch --array=1-10 permuLite_run.sh")
+system("sbatch -c 10 --array=1-10 permuLite_run.sh")
 
 
 #Check for 20 out/err files in the log folder
