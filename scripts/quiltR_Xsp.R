@@ -1,5 +1,5 @@
 cat("\nCombining runs into permutation matrix.")
-quiltR <- function(pathIn){
+quiltR <- function(pathIn, autosomal = TRUE){
   library(utils)
   files <- list.files(pathIn, full.names = T)
   #Init output list
@@ -9,14 +9,18 @@ quiltR <- function(pathIn){
   pb <- txtProgressBar(min = 0, max = length(files), style = 3)
   for(i in seq_along(files)){
     #Pull the perm output
-    tmp <- readRDS(files[i])
+    if(autosomal == TRUE){
+      tmp <- readRDS(files[i])$A
+    }else{
+      tmp <- readRDS(files[i])$X
+    }
     #seq along the columns
     for(j in seq_along(colnames(tmp))){
       if(!colnames(tmp)[j] %in% names(outList)){
-        outList[[colnames(tmp)[j]]] <- tmp[[j]]
+        outList[[colnames(tmp)[j]]] <- tmp[,colnames(tmp)[j]]
       }else{
         #concat output to slot data and set
-        outList[[colnames(tmp)[j]]] <- c(outList[[colnames(tmp)[j]]],tmp[[j]])
+        outList[[colnames(tmp)[j]]] <- c(outList[[colnames(tmp)[j]]],tmp[,colnames(tmp)[j]])
       }
     }
     setTxtProgressBar(pb, i)
@@ -25,8 +29,10 @@ quiltR <- function(pathIn){
   out <- do.call("cbind", outList)
 }
 
-permMat <- quiltR("../results/")
+permMatA <- quiltR("../results/", autosomal = TRUE)
+permMatX <- quiltR("../results/", autosomal = FALSE)
 
-saveRDS(permMat, file = "../processed/permuLite_matrix.rds")
+saveRDS(permMatA, file = "../processed/permuLite_matrix_A.rds")
+saveRDS(permMatX, file = "../processed/permuLite_matrix_X.rds")
 
 cat("\nDone.\n")

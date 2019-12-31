@@ -20,10 +20,10 @@ quiltR <- function(pathIn){
     #seq along the columns
     for(j in seq_along(colnames(tmp))){
       if(!colnames(tmp)[j] %in% names(outList)){
-        outList[[colnames(tmp)[j]]] <- tmp[[j]]
+        outList[[colnames(tmp)[j]]] <- tmp[,colnames(tmp)[j]]
       }else{
         #concat output to slot data and set
-        outList[[colnames(tmp)[j]]] <- c(outList[[colnames(tmp)[j]]],tmp[[j]])
+        outList[[colnames(tmp)[j]]] <- c(outList[[colnames(tmp)[j]]],tmp[,colnames(tmp)[j]])
       }
     }
     setTxtProgressBar(pb, i)
