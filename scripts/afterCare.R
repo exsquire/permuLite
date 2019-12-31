@@ -40,5 +40,7 @@ if(length(miss) != 0){
   re_run <- gsub("sbatch",paste0("sbatch --array=",miss_resub),cmd_override)
   cat("\nRe-running failed jobs.\n")
   system(re_run)
+}else{
+  cat("\nAll jobs present and accounted for!\n")
 }
 
