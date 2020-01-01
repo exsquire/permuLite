@@ -37,6 +37,11 @@ if(length(miss) != 0){
   cat(miss, sep = ",")
   cat("\nRe-running...\n")
   cmd_override <- readLines("../processed/opt_params.txt", warn = FALSE)
+  #Pull old cores
+  oldCores <- as.numeric(gsub("^.*-c | permuLite_run.sh","",cmd_override))
+  #Add one more!
+  cmd_override <- gsub("-c [0-9]+", paste0("-c ",oldCores + 1), cmd_override)
+  #Re-run
   re_run <- gsub("sbatch",paste0("sbatch --array=",miss_resub),cmd_override)
   cat("\nRe-running failed jobs.\n")
   system(re_run)
