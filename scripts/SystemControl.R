@@ -74,7 +74,7 @@ stopifnot(length(unique(res[isComp,"Cores"])) == 1)
 #Pull mem and cores and calc a "safe" value
 cores <- as.numeric(res[isComp,"Cores"][1])
 pullMem <- as.numeric(gsub("[A-Z].*$","",res[isComp,"Max Mem used"]))
-optMem <- 1.5(mean(pullMem)) + 4*sd(pullMem)
+optMem <- 1.5 * (max(pullMem)) + 4*sd(pullMem)
 #round up to nearest half gig
 optMem_perCore <- (ceiling(optMem * 2)/2)/cores * 1000
 
