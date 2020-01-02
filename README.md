@@ -15,6 +15,7 @@ Decrease run time for permutation analysis in r/qtl2 eQTL analysis by filtering 
 ## To Use
 1. Git clone onto unix-based cluster
 2. cd into permuLite
+ - module load R (must have all required packages in user lib)
 3. Rscript permuLite.R
 - Inspect newly generated R and bash scripts in /scripts
 4. cd scripts
