@@ -8,23 +8,23 @@ dir.create("processed")
 dir.create("log")
 dir.create("results")
 
-#Set paths for cross-script accessibility 
-probPath = "./test/oneChr_apr.rds"
-phenPath = "./test/testPheno.rds"
-kinPath = "./test/testKin.rds"
-covPath = "./test/testCovar.rds"
-mapPath = "./test/pmap.rds"
-ctrlPath = "./processed/control.rds"
+#Set paths for cross-script accessibility
+source("./scripts/loadingBae.R")
+pathIn <- loadingBae("./test", key = c("apr",
+                                       "pheno",
+                                       "kin",
+                                       "covar",
+                                       "map"))
 
 #present wd
 pwd <- getwd()
 
 #Load testing data for genome scan
-apr <- readRDS(probPath)
-pheno <- readRDS(phenPath)
-kin <- readRDS(kinPath)
-cov <- readRDS(covPath)
-pmap <- readRDS(mapPath)
+apr <- readRDS(pathIn[["apr"]])
+pheno <- readRDS(pathIn[["pheno"]])
+kin <- readRDS(pathIn[["kin"]])
+cov <- readRDS(pathIn[["covar"]])
+pmap <- readRDS(pathIn[["map"]])
 
 
 cat("\nBuilding control file...\n")
@@ -33,7 +33,7 @@ cat("\nBuilding control file...\n")
 source("./scripts/perminatorLite.R")
 #Select single column, 50 permutations
 ctrl <- perminatorL(pheno, ask = F)
-saveRDS(ctrl, file = ctrlPath)
+saveRDS(ctrl, file = "./processed/control.rds")
 
 cat("\nRunning Full Genome Scan...\n")
 #Run the full genome scan
@@ -53,13 +53,11 @@ useCores <- 2
 needMem <- 2500
 #Assumes maxCores * needMem is >>> required memory per job, if not, chop up job
 maxCores <- 10
-
 #24 hours default
 needTime <- "24:00:00"
 
+#Build R script------------------------------------------------
 cat("\nBuilding R script...\n")
-#------------------------------------------------
-#Build R script
 sink("./scripts/permuLite_Rcode.R")
 cat(
   "library(qtl2)
@@ -95,9 +93,8 @@ cat(
   ", sep = "")
 sink()
 
+#Build batch script------------------------------------------------
 cat("\nBuilding bash script...\n")
-#------------------------------------------------
-#Build batch script
 sink("./scripts/permuLite_run.sh")
 cat(
 "#!/bin/bash -l
