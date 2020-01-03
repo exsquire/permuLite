@@ -19,11 +19,11 @@ Decrease run time for permutation analysis in r/qtl2 eQTL analysis by filtering 
  - module load R (must have all required packages in user lib)
 3. Rscript permuLite.R
 - Inspect newly generated R and bash scripts in /scripts
-4a. exit pseudoterminal (downstream scripts request their own resources)
-4b. cd scripts
-5. Rscript SystemControl.R
+4. exit pseudoterminal (downstream scripts request their own resources)  
+5. cd scripts  
+6. Rscript SystemControl.R
 - Runs 10 jobs at "max" resource allocation, collect profile data, re-runs all jobs with optimized resource requests. 
-6. Test afterCare utility suite. 
+7. Test afterCare utility suite. 
 - cd /results, remove files at random
 - cd /scripts
 - chmod 755 afterCare.R
