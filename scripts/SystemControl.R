@@ -1,6 +1,5 @@
 #System Control - running system control assumes that the array job is functional
 #I.E. properly parallelized, paths to inputs and outputs correct, first array check passed
-library(lubridate)
 #chmod the permuLite R and bash code
 system("chmod 755 permuLite_Rcode.R permuLite_run.sh")
 
