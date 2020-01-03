@@ -1,14 +1,16 @@
 #System Control - running system control assumes that the array job is functional
 #I.E. properly parallelized, paths to inputs and outputs correct, first array check passed
 library(lubridate)
+
 #chmod the permuLite R and bash code
 system("chmod 755 permuLite_Rcode.R permuLite_run.sh")
 
+#Check for empty folders
+stopifnot(length(list.files("../log")) == 0 )
+stopifnot(length(list.files("../results")) == 0)
+
 #Run 10 array jobs
 system("sbatch --array=1-10 permuLite_run.sh")
-
-#Check for 20 out/err files in the log folder
-stopifnot(length(list.files("../log")) == 0 )
 
 #Wait loop
 cat("\nWaiting for jobs to finish, updates every minute...")
