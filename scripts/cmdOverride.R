@@ -1,6 +1,6 @@
 #Using SLURM job profile data, override sbatch resource requests with new values - for permuLite
 #Cluster and run-specific variables
-require(lubridate)
+library(lubridate)
 maxCoreMB <- 2500
 coresPerUnit <- 2
 
