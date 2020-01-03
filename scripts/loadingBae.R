@@ -11,8 +11,10 @@ loadingBae <- function(path, key){
   if(!all(sapply(pathIn, function(x) length(x) > 0))){
     cat("Error: One or more input(s) could not be found.\n")
     print(sapply(pathIn, function(x) length(x) > 0))
+    stop()
   }else{
     cat("\nFound the following inputs: \n")
     print(sapply(pathIn, function(x) length(x) > 0))
   }
+  return(pathIn)               
 }
