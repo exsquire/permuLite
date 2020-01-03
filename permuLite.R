@@ -25,7 +25,7 @@ pheno <- readRDS(pathIn[["pheno"]])
 kin <- readRDS(pathIn[["kin"]])
 cov <- readRDS(pathIn[["covar"]])
 pmap <- readRDS(pathIn[["map"]])
-
+ctrlPath <- "./processed/control.rds"
 
 cat("\nBuilding control file...\n")
 #Build a control file that maps your phenotype matrix to different
@@ -33,7 +33,7 @@ cat("\nBuilding control file...\n")
 source("./scripts/perminatorLite.R")
 #Select single column, 50 permutations
 ctrl <- perminatorL(pheno, ask = F)
-saveRDS(ctrl, file = "./processed/control.rds")
+saveRDS(ctrl, file = ctrlPath)
 
 cat("\nRunning Full Genome Scan...\n")
 #Run the full genome scan
@@ -62,12 +62,12 @@ sink("./scripts/permuLite_Rcode.R")
 cat(
   "library(qtl2)
   #Read in inputs
-  apr <- readRDS(",basename(probPath),")
-  pheno <- readRDS(",basename(phenPath),")
-  kLOCO <- readRDS(",basename(kinPath),")
-  covar <- readRDS(",basename(covPath),")
+  apr <- readRDS(",basename(pathIn[["apr"]]),")
+  pheno <- readRDS(",basename(pathIn[["pheno"]]),")
+  kLOCO <- readRDS(",basename(pathIn[["kin"]]),")
+  covar <- readRDS(",basename(pathIn[["covar"]]),")
+  pmap <- readRDS(",basename(pathIn[["map"]]),")
   ctrl <- readRDS(",basename(ctrlPath),")
-  pmap <- readRDS(",basename(mapPath),")
   ", sep = "'")
 
 cat(
@@ -120,12 +120,12 @@ module load R
 mkdir -p $SCR_DIR
 cd $SCR_DIR
 #Copy over everything for permutation Run
-cp -p ",pwd,gsub("^.","", probPath)," .
-cp -p ",pwd,gsub("^.","", phenPath)," .
-cp -p ",pwd,gsub("^.","", kinPath)," .
-cp -p ",pwd,gsub("^.","", covPath)," .
+cp -p ",pwd,gsub("^.","", pathIn[["apr"]])," .
+cp -p ",pwd,gsub("^.","", pathIn[["pheno"]])," .
+cp -p ",pwd,gsub("^.","", pathIn[["kin"]])," .
+cp -p ",pwd,gsub("^.","", pathIn[["covar"]])," .
+cp -p ",pwd,gsub("^.","", pathIn[["map"]])," . 
 cp -p ",pwd,gsub("^.","", ctrlPath)," .
-cp -p ",pwd,gsub("^.","", mapPath)," . 
 cp -p ",pwd,"/scripts/permuLite_Rcode.R .
 
 #Confirm presence of input files in scratch
