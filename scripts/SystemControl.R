@@ -59,13 +59,13 @@ saveRDS(res, "../processed/profOut.rds")
 #OPTIMIZATION INCORPORTATES SAFETY MARGINS IN RESOURCE REQUESTS
 #Calculate optimal time  
 #For completed runs only
-isComp <- res[,"State"] == "COMPLETED"
+isComp <- res[,"State"] == "COMPLETED" | res[,"State"] == "RUNNING"
 pullTime <- strptime(res[isComp,"Used walltime"],'%H:%M:%S')
 #convert to strptime
 sec <- (pullTime$hour * 3600) + (pullTime$min * 60) + pullTime$sec
 
-#Request twice the average + 3sd time
-secForm <- seconds_to_period(ceiling(2*(mean(sec) + 3*sd(sec))))
+#Request twice the max
+secForm <- seconds_to_period(ceiling(2*(max(sec))))
 optTime <- sprintf('%02d:%02d:%02d', secForm@hour, minute(secForm), second(secForm))
 
 #Calculate optimal memory
@@ -73,30 +73,29 @@ optTime <- sprintf('%02d:%02d:%02d', secForm@hour, minute(secForm), second(secFo
 stopifnot(all(grepl("G", res[isComp,"Max Mem used"])))
 stopifnot(length(unique(res[isComp,"Cores"])) == 1)
 
-#Pull mem and cores and calc a "safe" value
-cores <- as.numeric(res[isComp,"Cores"][1])
+#Pull mem and calc a "safe" value - 120% + 4sd
 pullMem <- as.numeric(gsub("[A-Z].*$","",res[isComp,"Max Mem used"]))
-optMem <- 1.5*(max(pullMem)) + 4*sd(pullMem)
-#round up to nearest half gig
-optMem_perCore <- (ceiling(optMem * 2)/2)/cores * 1000
+optMem <- 1.2*(max(pullMem)) + 4*sd(pullMem)
 
 #Adjust cores so optMem_perCore is close to max mem per core
 #But not over max mem per core
 #2500M is partition specific - enter your own partition's max if different
 adjustCores <- 2
-newCoreMem <- optMem_perCore
+#round up to nearest half gig
+optMem_perCore <- (ceiling(optMem * 2)/2)/adjustCores * 1000
 #If 2 cores are enough, keep, but update mem request
 #Else, increase cores and update mem request
-if(2500 > newCoreMem){
-  newCoreMem <- ceiling((ceiling(optMem * 2)/2)/adjustCores * 1000)
+if(optMem_perCore <=2500){
+  optMem_perCore <- 2500
 }else{
-  while(newCoreMem > 2500 | newCoreMem < 2000){
+  while(optMem_perCore > 2500){
     adjustCores <- adjustCores + 1
-    newCoreMem <- ceiling((ceiling(optMem * 2)/2)/adjustCores * 1000)
+    optMem_perCore <- ceiling((ceiling(optMem * 2)/2)/adjustCores * 1000)
   }
 }
+                                                                    
 #Re-run sbatch using new mem-per-cpu and time override
-cmd_override <- paste0("sbatch --mem-per-cpu=",newCoreMem,
+cmd_override <- paste0("sbatch --mem-per-cpu=",optMem_perCore,
                        " --time=",optTime,
                        " -c ",adjustCores,
                        " permuLite_run.sh")
