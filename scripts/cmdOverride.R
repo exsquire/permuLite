@@ -20,12 +20,16 @@ secForm <- seconds_to_period(ceiling(2*(max(sec))))
 optTime <- sprintf('%02d:%02d:%02d', secForm@hour, minute(secForm), second(secForm))
 
 #Calculate optimal memory
-#Make sure it's in gigs and #cores are constant
-stopifnot(all(grepl("G", res[isComp,"Max Mem used"])))
+#Make sure #cores are consistant
 stopifnot(length(unique(res[isComp,"Cores"])) == 1)
 
-#Pull mem and calc a "safe" value - 120% + 4sd
+#pull Max memory used
 pullMem <- as.numeric(gsub("[A-Z].*$","",res[isComp,"Max Mem used"]))
+#Allow for differentiation between M and G - potential lack of robustness depending on cpu name, e.g. M10-92 
+if(!all(grepl("G", res[isComp,"Max Mem used"]))){
+  inMb <- grepl("M", res[isComp, "Max Mem used"])
+  pullMem[inMb] <- pullMem[inMb]/1000
+}
 
 #Safety margin is 120% + 4sd of max 'max mem used' 
 optMem <- 1.2*(max(pullMem)) + 4*sd(pullMem)
