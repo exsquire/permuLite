@@ -85,14 +85,20 @@ adjustCores <- 2
 newCoreMem <- optMem_perCore
 #If 2 cores are enough, keep, but update mem request
 #Else, increase cores and update mem request
-if(2500 > newCoreMem){
-  newCoreMem <- ceiling((ceiling(optMem * 2)/2)/adjustCores * 1000)
-}else{
-  while(newCoreMem > 2500 | newCoreMem < 2000){
-    adjustCores <- adjustCores + 1
-    newCoreMem <- ceiling((ceiling(optMem * 2)/2)/adjustCores * 1000)
+while(newCoreMem > 2500){
+  if(newCoreMem > 2500){
+    cat("Optimal memory request per core exceeds limit...\n")
   }
+  adjustCores <- adjustCores + 1
+  cat("Adjusting core allocation...\n")
+  newCoreMem <- ceiling((ceiling(optMem * 2)/2)/adjustCores * 1000)  
 }
+cat("Optimal Memory per Core =", newCoreMem,
+    "\nOptimal Cores =", adjustCores,
+    "\nOptimal Runtime =", optTime,"\n")
+
+cat("Submitting...\n")
+                                                                    
 #Re-run sbatch using new mem-per-cpu and time override
 cmd_override <- paste0("sbatch --mem-per-cpu=",newCoreMem,
                        " --time=",optTime,
