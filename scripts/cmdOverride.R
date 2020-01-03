@@ -25,6 +25,11 @@ stopifnot(length(unique(res[isComp,"Cores"])) == 1)
 
 #pull Max memory used
 pullMem <- as.numeric(gsub("[A-Z].*$","",res[isComp,"Max Mem used"]))
+if(any(is.na(pullMem))){
+  cat("NAs detected and set to zero...\n")
+  pullMem[is.na(pullMem)] <- 0
+}
+  
 #Allow for differentiation between M and G - potential lack of robustness depending on cpu name, e.g. M10-92 
 if(!all(grepl("G", res[isComp,"Max Mem used"]))){
   inMb <- grepl("M", res[isComp, "Max Mem used"])
