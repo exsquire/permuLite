@@ -4,12 +4,12 @@ library(lubridate)
 #chmod the permuLite R and bash code
 system("chmod 755 permuLite_Rcode.R permuLite_run.sh")
 
-#Log folder must be empty
+#Log and results folder must be empty
 stopifnot(length(list.files("../log")) == 0 )
+stopifnot(length(list.files("../results")) == 0 )
 
 #Run 10 array jobs
 system("sbatch -c 10 --array=1-10 permuLite_run.sh")
-
 
 #Check for 20 out/err files in the log folder
 #Wait loop
@@ -17,35 +17,10 @@ cat("\nWaiting for jobs to finish, updates every minute...")
 while(length(list.files("../results")) != 10){
   Sys.sleep(60)
 }
-cat("\nJobs have completed. Profiling jobs for optimization...\n")
-
-
+cat("\nJobs have completed. Gathering profile data for optimization...\n")
 #Extract the SLURM job profiles
-outfiles <- list.files("../log/", pattern = ".out", full.names = TRUE)
-outlist <- list()
-for(i in seq_along(outfiles)){
-  tmp <- readLines(outfiles[i])
-  pos <- grep("End of program", tmp)+1
-  #Alternative profile output
-  if(length(pos) == 0){
-    #Check for "State" row in 7th position
-    altPos <- grep("State", tmp)
-    if(altPos == 7){
-      pos = 1
-    }
-  }
-  if(length(tmp) < pos){
-      outlist[[i]] <- NULL
-  }else{
-      split <- strsplit(tmp[pos:length(tmp)], ": ")
-      trim <- lapply(split, trimws)
-      outlist[[i]] <- setNames(sapply(trim, function(x)x[2]),sapply(trim, function(x)x[1]))
-      outlist[[i]] <- c("jobID" = gsub("\\.out$","",basename(outfiles[i])),outlist[[i]])
-  }
-  
-}
-outlist[sapply(outlist, is.null)] <- NULL
-res <- do.call("rbind",outlist)
+source("logCabin.R")
+res <- logCabin("../log")
 saveRDS(res, "../processed/profOut.rds")
 
 #Note* 
