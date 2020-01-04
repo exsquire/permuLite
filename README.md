@@ -23,9 +23,8 @@ Decrease run time for permutation analysis in r/qtl2 eQTL analysis by filtering 
 5. cd scripts  
 6. Rscript SystemControl.R
 - Runs 10 jobs at "max" resource allocation, collect profile data, re-runs all jobs with optimized resource requests. 
-7. Test afterCare utility suite. 
-- cd /results, remove files at random
-- cd /scripts
-- chmod 755 afterCare.R
-- Rscript afterCare.R 
-- Re-runs failed or missing runs, combines jobs into permutation matrix based on column name 
+7. Rscript afterCare.R
+- afterCare.R identifies missing jobs in sequentially named runs (i.e. runA_job1, runA_job2, etc.)
+- then re-runs the failed jobs with an additional core of memory
+8. Rscript quiltR_Xsp.R
+- sticks array job together into permutation matrices, one for Autosomes and one for X chromosome
