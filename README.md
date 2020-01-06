@@ -1,6 +1,8 @@
 # permuLite
 Decrease run time for permutation analysis in r/qtl2 eQTL analysis by filtering phenotypes at a conservative threshold determined by quantile standard error. 
 
+## Pre-Reqs
+1. qtl2, lubridate, dplyr, ggplot, RSQLite, httr, and EnrichR packages installed to local R bin (pty R, install.packages)
 
 ## Method
 1. Submit phenotype matrix and build control file with permuLite.R for 50 permutations
