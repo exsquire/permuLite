@@ -1,3 +1,4 @@
+**NOTE**: See branch 1.0.0 for up-to-date version
 # permuLite
 Decrease run time for permutation analysis in r/qtl2 eQTL analysis by filtering phenotypes at a conservative threshold determined by quantile standard error. 
 
