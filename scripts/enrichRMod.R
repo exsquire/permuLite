@@ -65,7 +65,7 @@ enrichrMod <- function (genes, alpha = 0.05,
     return(x)
   }
   res <- lapply(result, nullCull)
-
+  
   purgeTheWeak <- function(x, filter = "Adjusted.P.value",
                            alpha = 0.05){
     if(any(x[[filter]] <= alpha)){
@@ -83,11 +83,11 @@ enrichrMod <- function (genes, alpha = 0.05,
   }
   
   outList <- list()
-  for(j in 1:length(sigRes)){
-    desig <- names(sigRes)[j]
+  for(j in 1:length(res)){
+    desig <- names(res)[j]
     outList[[j]] <- cbind(data.frame(Library = desig,
                                      stringsAsFactors = F),
-                          sigRes[[j]])
+                          res[[j]])
   }
   #Output as dataframe
   return(do.call("rbind",outList))
