@@ -56,33 +56,39 @@ enrichrMod <- function (genes, alpha = 0.05,
   }
   
   #Cull searches with no results
-  nullCull <- function(x, alpha = 0.05){
+  nullCull <- function(x){
     #for each slot, check Adjusted.P.Value column
     #Null if greater than 0.05
     if(nrow(x) == 0){
       x <- NULL
+    }
+    return(x)
+  }
+  res <- lapply(result, nullCull)
+
+  purgeTheWeak <- function(x, filter = "Adjusted.P.value",
+                           alpha = 0.05){
+    if(any(x[[filter]] <= alpha)){
+      filt <- x[[filter]] <= alpha
+      return(x[filt,-c(5,6)])
     }else{
-      x <- x[x$Adjusted.P.value <= alpha,-c(5,6)]
+      return(NULL)
     }
   }
-  res <- lapply(result, nullCull, alpha = alpha)
+  res <- lapply(result, purgeTheWeak)
+  
+  #Remove any NULLs
   if(any(sapply(res,is.null))){
     res <- res[sapply(res,is.null) != TRUE]
   }
-    
-  #Cull any empty dataframes after initial filter
-  if(sum(sapply(res, nrow)) == 0){
-    return(NULL)
-  }else{
-    sigRes <- res[sapply(res, nrow) != 0]
-    outList <- list()
-    for(j in 1:length(sigRes)){
-        desig <- names(sigRes)[j]
-        outList[[j]] <- cbind(data.frame(Library = desig,
+  
+  outList <- list()
+  for(j in 1:length(sigRes)){
+    desig <- names(sigRes)[j]
+    outList[[j]] <- cbind(data.frame(Library = desig,
                                      stringsAsFactors = F),
                           sigRes[[j]])
-    }
-    #Output as dataframe
-    return(do.call("rbind",outList))
   }
+  #Output as dataframe
+  return(do.call("rbind",outList))
 }
