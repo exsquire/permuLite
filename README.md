@@ -5,6 +5,7 @@ Decrease run time for permutation analysis in r/qtl2 eQTL analysis by filtering 
 1. qtl2, lubridate, dplyr, ggplot, RSQLite, httr, and EnrichR packages installed to local R bin (pty R, install.packages)
 
 ## Method
+0. git clone -b 1.0.0 --single-branch https://github.com/exsquire/permuLite.git
 1. Submit phenotype matrix and build control file with permuLite.R for 50 permutations
 2. Use control file to direct array job on cluster
 3. Combine output into a pLite_thresh matrix
