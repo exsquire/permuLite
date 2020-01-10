@@ -1,6 +1,7 @@
 #DO_PIPE
 setwd(".")
 #----------------
+library(DBI)
 library(qtl2)
 library(dplyr)
 library(httr)
