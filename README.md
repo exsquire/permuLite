@@ -16,18 +16,15 @@ Decrease run time for permutation analysis in r/qtl2 eQTL analysis by filtering 
 8. Run 1,000 permutation on filtered phenotypes. 
 
 ## To Use
-0. Roll up bash pseudo terminal (prevent sysadmin toungue-lashing)
-1. Git clone onto unix-based cluster (suggested branch: 1.0.0)
-2. cd into permuLite
+0. Setup
  - module load R (must have all required packages in user lib)
-3. Rscript permuLite.R
-- Inspect newly generated R and bash scripts in /scripts
-4. exit pseudoterminal (downstream scripts request their own resources)  
-5. cd scripts  
-6. Rscript SystemControl.R
-- Runs 10 jobs at "max" resource allocation, collect profile data, re-runs all jobs with optimized resource requests. 
-7. Rscript afterCare.R
-- afterCare.R identifies missing jobs in sequentially named runs (i.e. runA_job1, runA_job2, etc.)
-- then re-runs the failed jobs with an additional core of memory
-8. Rscript quiltR_Xsp.R
-- sticks array job together into permutation matrices, one for Autosomes and one for X chromosome
+ - Roll up bash pseudo terminal (prevent sysadmin toungue-lashing)
+ - Git clone onto unix-based cluster (suggested branch: 1.0.0)
+ - cd into permuLite
+1. Rscript permuLite.R
+ - exit pseudoterminal (downstream scripts request their own resources)  
+ - cd scripts  
+2. Rscript SystemControl.R
+3. Rscript afterCare.R
+4. Rscript quiltR_Xsp.R
+5. Rscript DOpipe.R
