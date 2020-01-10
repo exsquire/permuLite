@@ -5,6 +5,7 @@ library(qtl2)
 library(dplyr)
 library(httr)
 library(enrichR)
+source("enrichRMod.R")
 
 dir.create("../output/data/peak-genes", recursive = TRUE)
 dir.create("../output/data/enrichr-results")
