@@ -5,6 +5,7 @@ library(DBI)
 library(qtl2)
 library(dplyr)
 library(httr)
+library(RSQLite)
 library(enrichR)
 source("enrichRMod.R")
 
