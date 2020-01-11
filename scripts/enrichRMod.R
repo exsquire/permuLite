@@ -68,6 +68,7 @@ enrichrMod <- function (genes, alpha = 0.05,
   
   purgeTheWeak <- function(x, filter = "Adjusted.P.value",
                            alpha = 0.05){
+    x <- x[complete.cases(x),] 
     if(any(x[[filter]] <= alpha)){
       filt <- x[[filter]] <= alpha
       return(x[filt,-c(5,6)])
