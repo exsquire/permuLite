@@ -1,8 +1,7 @@
 #Submit a vector of genes to Ma'ayan Labs' EnrichR Tool
 #Uses API query method from enrichR package: https://cran.r-project.org/package=enrichR. 
 enrichrMod <- function (genes, alpha = 0.05, 
-                        databases = as.character(listEnrichrDbs()[["libraryName"]]), quiet = F) 
-{
+                        databases = as.character(listEnrichrDbs()[["libraryName"]]), quiet = F){
   library(httr)
   library(enrichR)
   if(quiet == F){
@@ -10,13 +9,13 @@ enrichrMod <- function (genes, alpha = 0.05,
   }
   
   #Call and Response to EnrichR
-  if (is.vector(genes)) {
+  if(is.vector(genes)){
     temp <- POST(url = "http://amp.pharm.mssm.edu/Enrichr/enrich", 
                  body = list(list = paste(genes, collapse = "\n")))
-  }
-  else {
+  }else{
     warning("genes must be a vector of gene names.")
   }
+  
   GET(url = "http://amp.pharm.mssm.edu/Enrichr/share")
   if(quiet == F){
     cat("Done.\n")
@@ -68,6 +67,7 @@ enrichrMod <- function (genes, alpha = 0.05,
   
   purgeTheWeak <- function(x, filter = "Adjusted.P.value",
                            alpha = 0.05){
+    x <- x[complete.cases(x),]
     if(any(x[[filter]] <= alpha)){
       filt <- x[[filter]] <= alpha
       return(x[filt,-c(5,6)])
