@@ -9,16 +9,18 @@ library(RSQLite)
 library(enrichR)
 source("enrichRMod.R")
 
-dir.create("../output/data/peak-genes", recursive = TRUE)
-dir.create("../output/data/enrichr-results")
-dir.create("../output/plots/lod/", recursive = TRUE)
+dir.create("../output/data/peak-genes", recursive = TRUE, showWarnings = FALSE)
+dir.create("../output/data/enrichr-results", showWarnings = FALSE)
+dir.create("../output/plots/lod/", recursive = TRUE, showWarnings = FALSE)
 
 #Select threshold level: 1 = 63% (associative), 2 = 95% (significant), 3 = 99% (highly significant)
 #If different thresholds are required, they can be generated from the full permutation matrix
 
 
 cat("\nInput run name...\n")
-prefix <- readLines(file("stdin"),n=1)
+con <- file("stdin")
+prefix <- readLines(con, n=1)
+close(con)
 
 #Local testing only-----
 #prefix <- "mixedCovar_Raw"
