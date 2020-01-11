@@ -76,7 +76,7 @@ enrichrMod <- function (genes, alpha = 0.05,
     }
   }
   res <- lapply(result, purgeTheWeak)
-  
+
   #Remove any NULLs
   if(any(sapply(res,is.null))){
     res <- res[sapply(res,is.null) != TRUE]
