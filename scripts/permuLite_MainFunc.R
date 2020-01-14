@@ -1,6 +1,4 @@
 #The meat and potatoes of permuLite
-setwd("./DOWL_permuLite/No_Xcovar/addCovar_Raw/scripts/")
-
 #The man himself
 library(broman)
 
