@@ -26,8 +26,10 @@ stopifnot(names(maxLOD_fullOut) == names(permThresh))
 
 
 #Test
+cat("Number of phenotypes over permuLite soft threshold:\n")
 table(maxLOD_fullOut >= permThresh)
 pLite_filter <- names(maxLOD_fullOut)[which(maxLOD_fullOut >= permThresh)]
 
 #Write out the filter to be used in subsetting phenotype matrices for the full run. 
+cat("Writing character vector of permuLite significant phenotypes to /processed\n")
 saveRDS(pLite_filter, "../processed/pLite_filter.rds")
