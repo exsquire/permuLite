@@ -76,6 +76,19 @@ for(i in 1:nrow(peaks_noX)){
                   "-",ceiling(tmp$ci_hi))
   pheno <- which(colnames(scanOut) == tmp$lodcolumn)
   chr <- tmp$chr
+  peak <- tmp$lod
+  
+  #Build peak-specific threshold object
+  threshPos <- numeric()
+  for(j in grep("^signif_",names(tmp))){
+    #abline and text
+    if(tmp$lod >= tmp[[j]]){
+      threshPos <- c(threshPos, tmp[j])
+    }
+  }
+  threshPos <- unlist(threshPos)
+  
+  #plotting
   png(paste0("../output/plots/lod/",desig,".png"),
       res = 300,
       height = 1600,
@@ -87,6 +100,14 @@ for(i in 1:nrow(peaks_noX)){
              bgcol="white",
              main = tmp$lodcolumn,
              cex = 1.5)
+  
+  #peak-specific threshold annotation loop 
+  for(k in seq_along(threshPos)){
+    #threshold h line with signif in margins
+    abline(h = threshPos[k], col = "red", lty = 2)
+    mtext(paste0(" ",gsub("^.*_","0.",names(threshPos)[k])), side = 4, at = threshPos[k], las = 2)
+  }
+  
   dev.off()
   setTxtProgressBar(pb, i)
 }
