@@ -1,5 +1,5 @@
 # permuLite
-Decrease run time for permutation analysis in r/qtl2 eQTL analysis by filtering phenotypes at a conservative threshold determined by quantile standard error. 
+Decrease run time for permutation analysis in r/qtl2 eQTL analysis by filtering phenotypes at a conservative threshold determined by quantile standard error. Includes cluster-array faciliation script for permutation validation, results processing, visuzalization, and enrichment of QTL peaks. 
 
 ## Pre-Reqs
 1. qtl2, lubridate, dplyr, ggplot2, RSQLite, DBI, httr, and enrichR packages installed to local R bin (pty R, install.packages)
@@ -16,7 +16,7 @@ Decrease run time for permutation analysis in r/qtl2 eQTL analysis by filtering 
 8. Run 1,000 permutation on filtered phenotypes. 
 
 ## Using your own data
-Input files are loaded from the /test directory. Out-of-the-box version requires the following files in rds format:
+Input files are loaded from the /test directory, which holds dummy data for testing purposes. Out-of-the-box version requires the following files in rds format:
 - Allele probability object
 - Numerical phenotype matrix
 - Kinship matrix
@@ -27,9 +27,14 @@ These objects are automatically loaded into the permuLite.R script by greping th
 - "apr", "pheno", "kin", "covar", and "pmap"
 - Take care not to have duplicates of these keywords among filenames
 
-Users that wish to load different inputs may modify the keywords argument of the loadingBae call within permuLite.R
-When inputs are loaded, they are passed to the scan1() and scan1perm() functions in permuLite.R, which should also be modified to reflect the inclusion or exclusion of the default inputs. 
+Users that wish to load different inputs to perform an additive covariate genome scan using all columns in the covariate matrix need simply replace the default files in /test with their own.
 
+If a user wishes to perform a different scan, add, or exclude one of the default parameters, they must change the following sections of permuLite.R to align with their changes: 
+
+ 1. Modify the keywords argument of the loadingBae call within permuLite.R
+ 2. Modify the loading paths to the genome scan
+ 3. Modify the arguments of the full genome scan function scan1()
+ 4. Modify the readRDS inputs and cp inputs in the "Build R script" and "Build batch script" sections, respectively. 
 
 ## To Use
 0. Setup
