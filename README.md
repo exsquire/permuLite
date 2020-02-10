@@ -34,8 +34,9 @@ If a user wishes to perform a different scan, add, or exclude one of the default
  1. Modify the keywords argument of the loadingBae call within permuLite.R
  2. Modify the loading paths to the genome scan
  3. Modify the arguments of the full genome scan function scan1()
- 4. Modify the readRDS inputs and cp inputs in the "Build R script" and "Build batch script" sections, respectively. 
-
+ 4. Modify the readRDS inputs and genome scan code in the "Build R script" section
+ 5. Modify the cp inputs in the "Build batch script" section
+ 
 ## To Use
 0. Setup
  - module load R (must have all required packages in user lib)
