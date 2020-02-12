@@ -1,6 +1,6 @@
 # permuLite
 
-![Image of DOpipe](https://github.com/exsquire/permuLite/blob/1.0.0/images/pipeImg.PNG)
+![Image of DOpipe](https://github.com/exsquire/permuLite/blob/1.0.0/img/pipeImg.PNG)
 
 Decrease run time for permutation analysis in r/qtl2 eQTL analysis by filtering phenotypes at a conservative threshold determined by quantile standard error. Includes cluster-array faciliation script for permutation validation, results processing, visuzalization, and enrichment of QTL peaks. 
 
