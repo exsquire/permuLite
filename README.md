@@ -43,20 +43,20 @@ If a user wishes to perform a different scan, add, or exclude one of the default
 ## To Use
 0. Setup
  - module load R (must have all required packages in user lib)
- - Roll up bash pseudo terminal (prevent sysadmin toungue-lashing)
  - Git clone onto unix-based cluster (suggested branch: 1.0.0)
  - cd into permuLite
  - (optional) modify the email sbatch input within permuLite to receive run updates
 1. Rscript permuLite.R
- - exit pseudoterminal (downstream scripts request their own resources)  
- - cd scripts  
-2. Rscript SystemControl.R
+ - cd scripts 
+2. Rscript ClusterScan.R
+3. Rscript afterCare_scan.R
+4. Rscript SystemControl.R
  - Keep terminal open until end of script execution
  - User will be alerted to end of 50 permutation run by email
-3. Rscript afterCare.R 
+5. Rscript afterCare.R 
  - Users that wish to use the permuLite filtered phenotypes to subset the phenotype matrix to those likely to produce significant QTL can run Rscript permuLite_MainFunc.R to write the filtered phenotype names to /processed
  - Users that wish to forgo analysis of the 50 permutation run may run Rscript haiRspray.R to begin 1,000 permutation run
-4. Rscript quiltR_Xsp.R
-5. Rscript DOpipe.R
+6. Rscript quiltR_Xsp.R
+7. Rscript DOpipe.R
  - Requires user input for output prefix, e.g. "DOproject" -> "DOproject_visualization1, DOproject_visualization2,..."
 
