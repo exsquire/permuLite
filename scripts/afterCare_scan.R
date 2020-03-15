@@ -42,4 +42,12 @@ if(length(miss) != 0){
   system(re_run)
 }else{
   cat("\nAll jobs present and accounted for!\n")
+  cat("\nBinding contents of genScan...\n")
+  outlist <- list()
+  path = "../genScan/"
+  files = list.files(path, full.names = TRUE)
+  for(i in seq_along(files)){tmp <- readRDS(files[i]); outlist[[i]] <- tmp}
+  res <- do.call("cbind", outlist)
+  cat("\nWriting output to /processed/testOut.rds\n")
+  saveRDS(res,"../processed/testOut.rds")
 }
