@@ -31,7 +31,12 @@ pullMem <- as.numeric(gsub("^.* .*$","0.00",pullMem))
 #Allow for differentiation between M and G - potential lack of robustness depending on cpu name, e.g. M10-92 
 if(!all(grepl("G", res[isComp,"Max Mem used"]))){
   inMb <- grepl("M", res[isComp, "Max Mem used"])
-  pullMem[inMb] <- pullMem[inMb]/1000
+  if(all(inMb) == FALSE){
+    #If all in K, set to 1 M
+    pullMem <- rep(0.001,length(pullMem))
+  }else{
+    pullMem[inMb] <- pullMem[inMb]/1000
+  }
 }
 
 #Safety margin is 120% + 4sd of max 'max mem used' 
