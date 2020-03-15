@@ -99,8 +99,8 @@ cat(
 #Email me here when job starts, ends, or sh*ts the bed
 #SBATCH --mail-user=excel.que@gmail.com
 #SBATCH --mail-type=ALL
-#SBATCH -o ",pwd,"/log/permuLite-%A_%a.out
-#SBATCH -e ",pwd,"/log/permuLite-%A_%a.err
+#SBATCH -o ",pwd,"/scanLogs/genScan-%A_%a.out
+#SBATCH -e ",pwd,"/scanLogs/genScan-%A_%a.err
 #scratch designation
 export SCR_DIR=/scratch/$USER/$SLURM_JOBID/$SLURM_ARRAY_TASK_ID
 #Use Full Paths
@@ -202,7 +202,7 @@ cat(
 #SBATCH -c ",maxCores,"
 #SBATCH --mem-per-cpu=",needMem,"
 #SBATCH --array=1-",attributes(ctrl)$numJobs,"
-#SBATCH --partition=high
+#SBATCH --partition=med
 #SBATCH --time=",needTime,"
 #Email me here when job starts, ends, or sh*ts the bed
 #SBATCH --mail-user=excel.que@gmail.com
