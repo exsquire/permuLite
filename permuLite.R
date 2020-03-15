@@ -85,7 +85,7 @@ cat(
 sink()
 
 #Build batch script------------------------------------------------
-cat("\nBuilding bash script...\n")
+cat("\nBuilding bash script for Genome Scan...\n")
 sink("./scripts/genScan_run.sh")
 cat(
 "#!/bin/bash -l
@@ -156,7 +156,7 @@ sink()
 
 #########Permutation Partner Scripts#####################
 #Build R script------------------------------------------------
-cat("\nBuilding R script...\n")
+cat("\nBuilding R script for Permutations...\n")
 sink("./scripts/permuLite_Rcode.R")
 cat(
   "library(qtl2)
@@ -193,7 +193,7 @@ cat(
 sink()
 
 #Build batch script------------------------------------------------
-cat("\nBuilding bash script...\n")
+cat("\nBuilding bash script for Permutations...\n")
 sink("./scripts/permuLite_run.sh")
 cat(
 "#!/bin/bash -l
