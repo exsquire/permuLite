@@ -5,6 +5,7 @@ setwd(".")
 library(qtl2)
 
 dir.create("genScan")
+dir.create("scanLogs")
 dir.create("processed")
 dir.create("log")
 dir.create("results")
