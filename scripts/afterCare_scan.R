@@ -48,6 +48,10 @@ if(length(miss) != 0){
   files = list.files(path, full.names = TRUE)
   for(i in seq_along(files)){tmp <- readRDS(files[i]); outlist[[i]] <- tmp}
   res <- do.call("cbind", outlist)
-  cat("\nWriting output to /processed/testOut.rds\n")
-  saveRDS(res,"../processed/testOut.rds")
+  if(file.exists("../processed/testOut.rds")){
+    cat("\n testOut.rds already exists!\n")
+  }else{
+    cat("\nWriting output to /processed/testOut.rds\n")
+    saveRDS(res,"../processed/testOut.rds")
+  }
 }
