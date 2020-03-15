@@ -13,7 +13,7 @@ system("sbatch -c 10 --array=1-10 genScan_run.sh")
 #Check for 20 out/err files in the log folder
 #Wait loop
 cat("\nWaiting for jobs to finish, updates every minute...")
-while(length(list.files("../results")) != 10){
+while(length(list.files("../genScan")) != 10){
   Sys.sleep(60)
 }
 cat("\nJobs have completed. Gathering profile data for optimization...\n")
