@@ -49,6 +49,7 @@ If a user wishes to perform a different scan, add, or exclude one of the default
 1. Rscript permuLite.R
  - cd scripts 
 2. Rscript ClusterScan.R
+- Keep terminal open until end of script execution
 3. Rscript afterCare_scan.R
 4. Rscript SystemControl.R
  - Keep terminal open until end of script execution
